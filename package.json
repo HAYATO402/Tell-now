@@ -1,0 +1,9 @@
+﻿{
+  "name": "space-random-call-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Keyword-based space search and random voice chat matching app.",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

@@ -1,0 +1,185 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>SpaceCall</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <div class="phone-frame">
+        <header class="topbar">
+          <button class="mini-icon-button" type="button" aria-label="menu">
+            <span></span><span></span><span></span><span></span>
+          </button>
+          <div class="top-actions">
+            <label class="language-chip">
+              <select id="languageSelect">
+                <option value="ja">JA</option>
+                <option value="en">EN</option>
+                <option value="zh">ZH</option>
+                <option value="ar">AR</option>
+                <option value="es">ES</option>
+              </select>
+            </label>
+            <div id="topProfileAvatar" class="top-profile-avatar">?</div>
+          </div>
+        </header>
+
+        <section class="hero-card">
+          <p id="topBadge" class="top-badge">Voice Spaces</p>
+          <h1 id="heroTitle">検索した言葉から、誰かとつながる。</h1>
+          <p id="heroDescription" class="hero-description">キーワードごとにスペースが並び、そこからランダム通話できます。</p>
+        </section>
+
+        <section id="searchSection" class="screen-panel search-card">
+          <div class="search-row compact-search-row">
+            <label class="field grow search-field-wrap">
+              <span id="searchFieldLabel" class="visually-hidden">キーワード</span>
+              <input id="searchInput" type="text" placeholder="Search..." />
+            </label>
+            <button id="searchButton" class="search-fab" aria-label="search">⌕</button>
+          </div>
+          <div class="search-actions">
+            <button id="createRoomButton" class="secondary-button search-create-button" type="button">この言葉で部屋を作る</button>
+          </div>
+          <div class="hero-metrics compact-metrics">
+            <div class="metric-pill">
+              <span id="metricSpacesLabel">検索スペース</span>
+              <strong id="spaceCountMetric">0</strong>
+            </div>
+            <div class="metric-pill hot">
+              <span id="metricCallsLabel">進行中のランダム通話</span>
+              <strong id="activeCallsMetric">0</strong>
+            </div>
+          </div>
+          <div id="spaceList" class="space-grid"></div>
+        </section>
+
+        <section id="accountSection" class="screen-panel glass-card auth-card hidden">
+          <div class="room-heading">
+            <p class="section-label">Account</p>
+            <h2 id="authTitle">自分のアカウント</h2>
+            <p id="authDescription" class="muted">登録しておくと、表示名とプロフィール画像をそのまま使えます。</p>
+          </div>
+          <div id="currentAccountBox" class="status-card hidden">
+            <p class="section-label">Current Account</p>
+            <p id="currentAccountText" class="status-text">未ログイン</p>
+          </div>
+          <form id="authForm" class="join-form" onsubmit="return false;">
+            <div class="profile-fields">
+              <label class="field"><span id="emailLabel">メールアドレス</span><input id="authEmailInput" type="email" placeholder="you@example.com" required /></label>
+              <label class="field"><span id="passwordLabel">パスワード</span><input id="authPasswordInput" type="password" placeholder="6文字以上" required /></label>
+              <label class="field"><span id="accountNameLabel">表示名</span><input id="authDisplayNameInput" type="text" maxlength="24" placeholder="あなたの名前" /></label>
+              <label class="field"><span id="accountAvatarLabel">プロフィール画像URL</span><input id="authAvatarUrlInput" type="url" placeholder="https://example.com/avatar.jpg" /></label>
+            </div>
+            <div class="controls-grid">
+              <button type="button" id="signUpButton" class="primary-button">登録する</button>
+              <button type="button" id="loginButton" class="secondary-button">ログイン</button>
+            </div>
+          </form>
+        </section>
+
+        <section id="createSection" class="screen-panel glass-card auth-card hidden">
+          <div class="room-heading">
+            <p class="section-label">Create Room</p>
+            <h2 id="createRoomTitle">作りたい言葉で部屋を作る</h2>
+            <p id="createRoomDescription" class="muted">入力した言葉が、そのまま Club 一覧に追加されます。</p>
+          </div>
+          <form id="createRoomForm" class="join-form">
+            <div class="profile-fields">
+              <label class="field">
+                <span id="createRoomWordLabel">言葉</span>
+                <input id="createRoomWordInput" type="text" maxlength="32" placeholder="たとえば 映画 / music / 旅行" required />
+              </label>
+            </div>
+            <div class="controls-grid">
+              <button type="submit" id="submitCreateRoomButton" class="primary-button">この言葉で部屋を作る</button>
+              <button type="button" id="cancelCreateRoomButton" class="secondary-button">一覧に戻る</button>
+            </div>
+          </form>
+        </section>
+
+        <section id="callSection" class="screen-panel glass-card room-card hidden">
+          <div class="room-heading">
+            <p id="roomLabel" class="section-label">Selected Space</p>
+            <h2 id="roomTitle">まだスペースに入っていません</h2>
+            <p id="roomDescription" class="muted">検索結果からスペースを選ぶと、ここに詳細が表示されます。</p>
+          </div>
+
+          <div id="spaceHighlights" class="highlight-row hidden">
+            <div class="highlight-box"><span id="highlightUsersLabel">参加中</span><strong id="activeUsersCount">0</strong></div>
+            <div class="highlight-box"><span id="highlightWaitingLabel">待機中</span><strong id="waitingUsersCount">0</strong></div>
+            <div class="highlight-box live"><span id="highlightCallsLabel">ランダム通話中</span><strong id="activeCallsCount">0</strong></div>
+          </div>
+
+          <form id="joinForm" class="join-form hidden">
+            <div class="profile-row">
+              <div id="avatarPreview" class="avatar-preview">?</div>
+              <div class="profile-fields">
+                <label class="field"><span id="displayNameLabel">表示名</span><input id="displayNameInput" type="text" maxlength="24" placeholder="あなたの名前" required /></label>
+                <label class="field"><span id="avatarUrlLabel">プロフィール画像URL</span><input id="avatarUrlInput" type="url" placeholder="https://example.com/avatar.jpg" /></label>
+              </div>
+            </div>
+            <button type="submit" id="joinButton" class="primary-button wide-button">このスペースに入る</button>
+          </form>
+
+          <div id="roomControls" class="hidden">
+            <div class="self-card">
+              <div class="profile-chip">
+                <div id="selfAvatar" class="mini-avatar">?</div>
+                <div><p id="selfProfileLabel" class="section-label">Your Profile</p><strong id="selfNameText">-</strong></div>
+              </div>
+              <div class="profile-chip peer-chip">
+                <div id="peerAvatar" class="mini-avatar">?</div>
+                <div><p id="partnerLabel" class="section-label">Partner</p><strong id="peerName">未接続</strong></div>
+              </div>
+            </div>
+
+            <div class="status-card">
+              <p id="statusLabel" class="section-label">Status</p>
+              <p id="statusText" class="status-text">待機中ではありません</p>
+              <p id="presenceText" class="muted"></p>
+              <p id="callHint" class="muted">マッチすると自動で音声接続を試します。</p>
+            </div>
+
+            <div class="controls-grid">
+              <button id="queueButton" class="primary-button" type="button">ランダム通話を開始</button>
+              <button id="leaveQueueButton" class="secondary-button" type="button">待機をやめる</button>
+              <button id="endCallButton" class="secondary-button" type="button">通話を終了</button>
+            </div>
+
+            <label class="toggle-row"><input id="muteToggle" type="checkbox" /><span id="muteLabel">マイクをミュート</span></label>
+          </div>
+          <audio id="remoteAudio" autoplay></audio>
+        </section>
+
+        <section id="feedSection" class="screen-panel glass-card feed-card hidden">
+          <div class="feed-tabs">
+            <button id="chatTabButton" class="tab-button active" type="button">Chat</button>
+            <button id="historyTabButton" class="tab-button" type="button">History</button>
+          </div>
+          <div id="chatPane" class="feed-pane">
+            <div id="messageList" class="message-list"></div>
+            <form id="chatForm" class="chat-form">
+              <input id="chatInput" type="text" maxlength="400" placeholder="メッセージを入力" />
+              <button type="submit" id="sendButton" class="primary-button">送信</button>
+            </form>
+          </div>
+          <div id="historyPane" class="feed-pane hidden"><div id="historyList" class="history-list"></div></div>
+        </section>
+
+        <nav class="bottom-nav">
+          <button id="navSearch" class="nav-icon nav-active" type="button">⌂</button>
+          <button id="navAccount" class="nav-icon" type="button">◔</button>
+          <button id="navCall" class="nav-icon nav-primary" type="button">✎</button>
+          <button id="navChat" class="nav-icon" type="button">◎</button>
+          <button id="navHistory" class="nav-icon" type="button">☰</button>
+        </nav>
+      </div>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
