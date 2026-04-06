@@ -40,6 +40,9 @@ const SUPPORTED_LANGS = ["ja", "en", "zh", "ar", "es"];
 const SUPABASE_URL = process.env.SUPABASE_URL || "";
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 const SUPABASE_ENABLED = Boolean(SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY);
+const TURN_URL = process.env.TURN_URL || "";
+const TURN_USERNAME = process.env.TURN_USERNAME || "";
+const TURN_CREDENTIAL = process.env.TURN_CREDENTIAL || "";
 
 const baseSpaces = [
   {
@@ -136,6 +139,18 @@ function spaceLabel(space, lang) {
     es: `Espacio ${locale.name}`,
   };
   return labels[supportedLang(lang)];
+}
+
+function getRtcIceServers() {
+  const servers = [{ urls: "stun:stun.l.google.com:19302" }];
+  if (TURN_URL && TURN_USERNAME && TURN_CREDENTIAL) {
+    servers.push({
+      urls: TURN_URL.split(",").map((item) => item.trim()).filter(Boolean),
+      username: TURN_USERNAME,
+      credential: TURN_CREDENTIAL,
+    });
+  }
+  return servers;
 }
 
 function sendJson(response, statusCode, payload) {
@@ -806,7 +821,7 @@ function handleApi(request, response, url) {
   }
 
   if (request.method === "GET" && url.pathname === "/api/config") {
-    sendJson(response, 200, { languages: SUPPORTED_LANGS, supabaseEnabled: SUPABASE_ENABLED, authEnabled: true });
+    sendJson(response, 200, { languages: SUPPORTED_LANGS, supabaseEnabled: SUPABASE_ENABLED, authEnabled: true, rtcIceServers: getRtcIceServers() });
     return true;
   }
 
