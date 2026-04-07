@@ -109,6 +109,7 @@ const baseSpaces = [
 
 const dynamicSpaces = new Map();
 const localAccounts = new Map();
+const accountSessions = new Map();
 const participants = new Map();
 const waitingBySpace = new Map();
 const eventStreams = new Map();
@@ -159,6 +160,31 @@ function sendJson(response, statusCode, payload) {
     "Cache-Control": "no-store",
   });
   response.end(JSON.stringify(payload));
+}
+
+function issueAuthToken(account) {
+  const authToken = randomUUID();
+  accountSessions.set(authToken, {
+    authToken,
+    userId: account.userId,
+    email: account.email,
+    displayName: account.displayName,
+    avatarUrl: account.avatarUrl || "",
+    preferredLanguage: account.preferredLanguage || DEFAULT_LANG,
+    createdAt: nowIso(),
+  });
+  return authToken;
+}
+
+function getAccountSession(request, url, payload) {
+  const tokenFromHeader = request.headers["x-auth-token"];
+  const tokenFromQuery = url.searchParams.get("authToken");
+  const tokenFromPayload = payload?.authToken;
+  const authToken = String(tokenFromHeader || tokenFromQuery || tokenFromPayload || "").trim();
+  if (!authToken) {
+    return null;
+  }
+  return accountSessions.get(authToken) || null;
 }
 
 function sendEvent(participantId, type, data) {
@@ -801,6 +827,11 @@ function serveStaticFile(response, filePath) {
 
 function handleApi(request, response, url) {
   if (request.method === "GET" && url.pathname === "/api/spaces") {
+    const session = getAccountSession(request, url);
+    if (!session) {
+      sendJson(response, 401, { error: "auth_required" });
+      return true;
+    }
     const query = url.searchParams.get("q") || "";
     const lang = supportedLang(url.searchParams.get("lang") || DEFAULT_LANG);
     searchSpaces(query, lang).then((spaces) => sendJson(response, 200, { spaces })).catch((error) => sendJson(response, 500, { error: error.message }));
@@ -808,12 +839,22 @@ function handleApi(request, response, url) {
   }
 
   if (request.method === "GET" && url.pathname === "/api/messages") {
+    const session = getAccountSession(request, url);
+    if (!session) {
+      sendJson(response, 401, { error: "auth_required" });
+      return true;
+    }
     const spaceId = String(url.searchParams.get("spaceId") || "");
     fetchMessages(spaceId).then((messages) => sendJson(response, 200, { messages })).catch((error) => sendJson(response, 500, { error: error.message }));
     return true;
   }
 
   if (request.method === "GET" && url.pathname === "/api/history") {
+    const session = getAccountSession(request, url);
+    if (!session) {
+      sendJson(response, 401, { error: "auth_required" });
+      return true;
+    }
     const participantId = String(url.searchParams.get("participantId") || "");
     const spaceId = String(url.searchParams.get("spaceId") || "");
     fetchHistory({ participantId, spaceId }).then((history) => sendJson(response, 200, { history })).catch((error) => sendJson(response, 500, { error: error.message }));
@@ -825,7 +866,22 @@ function handleApi(request, response, url) {
     return true;
   }
 
+  if (request.method === "GET" && url.pathname === "/api/auth/session") {
+    const session = getAccountSession(request, url);
+    if (!session) {
+      sendJson(response, 401, { error: "invalid_session" });
+      return true;
+    }
+    sendJson(response, 200, { account: session });
+    return true;
+  }
+
   if (request.method === "GET" && url.pathname === "/api/events") {
+    const session = getAccountSession(request, url);
+    if (!session) {
+      sendJson(response, 401, { error: "auth_required" });
+      return true;
+    }
     const participantId = url.searchParams.get("participantId");
     if (!participantId || !participants.has(participantId)) {
       sendJson(response, 404, { error: "participant_not_found" });
@@ -884,7 +940,8 @@ function handleApi(request, response, url) {
 
       try {
         const account = await signUpAccount({ email, password, displayName, avatarUrl, preferredLanguage });
-        sendJson(response, 201, { account });
+        const authToken = issueAuthToken(account);
+        sendJson(response, 201, { account, authToken });
       } catch (error) {
         sendJson(response, 400, { error: error.message || "signup_failed" });
       }
@@ -901,7 +958,8 @@ function handleApi(request, response, url) {
 
       try {
         const account = await loginAccount({ email, password });
-        sendJson(response, 200, { account });
+        const authToken = issueAuthToken(account);
+        sendJson(response, 200, { account, authToken });
       } catch (error) {
         sendJson(response, 400, { error: error.message || "login_failed" });
       }
@@ -909,6 +967,11 @@ function handleApi(request, response, url) {
     }
 
     if (request.method === "POST" && url.pathname === "/api/spaces/create") {
+      const session = getAccountSession(request, url, payload);
+      if (!session) {
+        sendJson(response, 401, { error: "auth_required" });
+        return;
+      }
       const keyword = String(payload.keyword || payload.query || payload.name || "").trim();
       const lang = supportedLang(String(payload.lang || DEFAULT_LANG));
       const space = ensureDynamicSpace(keyword);
@@ -921,6 +984,11 @@ function handleApi(request, response, url) {
     }
 
     if (request.method === "POST" && url.pathname === "/api/participants") {
+      const session = getAccountSession(request, url, payload);
+      if (!session) {
+        sendJson(response, 401, { error: "auth_required" });
+        return;
+      }
       const displayName = String(payload.displayName || "").trim();
       const requestedSpaceId = String(payload.spaceId || "").trim();
       const keyword = String(payload.keyword || "").trim();
@@ -932,7 +1000,7 @@ function handleApi(request, response, url) {
         return;
       }
       const participant = {
-        id: randomUUID(), displayName, avatarUrl, preferredLanguage, spaceId: space.id, state: "idle", peerId: null, peerName: "", callSessionId: null, callStartedAt: null, connected: true,
+        id: randomUUID(), accountUserId: session.userId, displayName, avatarUrl, preferredLanguage, spaceId: space.id, state: "idle", peerId: null, peerName: "", callSessionId: null, callStartedAt: null, connected: true,
       };
       participants.set(participant.id, participant);
       persistProfile(participant);
@@ -948,6 +1016,11 @@ function handleApi(request, response, url) {
     }
 
     if (request.method === "POST" && url.pathname === "/api/queue/join") {
+      const session = getAccountSession(request, url, payload);
+      if (!session) {
+        sendJson(response, 401, { error: "auth_required" });
+        return;
+      }
       const participantId = String(payload.participantId || "");
       const participant = participants.get(participantId);
       if (!participant) {
@@ -970,6 +1043,11 @@ function handleApi(request, response, url) {
     }
 
     if (request.method === "POST" && url.pathname === "/api/queue/leave") {
+      const session = getAccountSession(request, url, payload);
+      if (!session) {
+        sendJson(response, 401, { error: "auth_required" });
+        return;
+      }
       const participantId = String(payload.participantId || "");
       removeFromQueue(participantId);
       sendJson(response, 200, { status: "left_queue" });
@@ -977,6 +1055,11 @@ function handleApi(request, response, url) {
     }
 
     if (request.method === "POST" && url.pathname === "/api/messages") {
+      const session = getAccountSession(request, url, payload);
+      if (!session) {
+        sendJson(response, 401, { error: "auth_required" });
+        return;
+      }
       const participantId = String(payload.participantId || "");
       const text = String(payload.text || "").trim();
       const participant = participants.get(participantId);
@@ -1003,6 +1086,11 @@ function handleApi(request, response, url) {
     }
 
     if (request.method === "POST" && url.pathname === "/api/signal") {
+      const session = getAccountSession(request, url, payload);
+      if (!session) {
+        sendJson(response, 401, { error: "auth_required" });
+        return;
+      }
       const participantId = String(payload.participantId || "");
       const toId = String(payload.toId || "");
       const kind = String(payload.kind || "");
@@ -1019,6 +1107,11 @@ function handleApi(request, response, url) {
     }
 
     if (request.method === "POST" && url.pathname === "/api/call/end") {
+      const session = getAccountSession(request, url, payload);
+      if (!session) {
+        sendJson(response, 401, { error: "auth_required" });
+        return;
+      }
       const participantId = String(payload.participantId || "");
       const participant = participants.get(participantId);
       if (!participant) {
@@ -1039,6 +1132,11 @@ function handleApi(request, response, url) {
     }
 
     if (request.method === "DELETE" && url.pathname.startsWith("/api/participants/")) {
+      const session = getAccountSession(request, url, payload);
+      if (!session) {
+        sendJson(response, 401, { error: "auth_required" });
+        return;
+      }
       const participantId = decodeURIComponent(url.pathname.split("/").pop() || "");
       cleanupParticipant(participantId);
       sendJson(response, 200, { status: "deleted" });
