@@ -8,13 +8,20 @@
     metricSpacesLabel: "検索スペース",
     metricCallsLabel: "進行中のランダム通話",
     authTitle: "自分のアカウント",
-    authDescription: "登録しておくと、表示名とプロフィール画像をそのまま使えます。",
+    authDescription: "メールアドレスとパスワードでログインすると Tellnow を使えます。",
+    signupTitle: "アカウント登録",
+    signupDescription: "登録が完了すると、そのまま Tellnow を使えます。",
     emailLabel: "メールアドレス",
     passwordLabel: "パスワード",
+    signupEmailLabel: "メールアドレス",
+    signupPasswordLabel: "パスワード",
     accountNameLabel: "表示名",
-    accountAvatarLabel: "プロフィール画像URL",
     signUpButton: "登録する",
     loginButton: "ログイン",
+    openSignupButton: "登録画面へ",
+    backToLoginButton: "ログインへ戻る",
+    showPassword: "表示",
+    hidePassword: "非表示",
     createRoomButton: "この言葉で部屋を作る",
     createRoomTitle: "作りたい言葉で部屋を作る",
     createRoomDescription: "入力した言葉が、そのまま Club 一覧に追加されます。",
@@ -25,7 +32,6 @@
     roomEmptyTitle: "まだスペースに入っていません",
     roomEmptyDescription: "検索結果からスペースを選ぶと、ここに詳細が表示されます。",
     displayNameLabel: "表示名",
-    avatarUrlLabel: "プロフィール画像URL",
     joinButton: "このスペースに入る",
     queueButton: "ランダム通話を開始",
     leaveQueueButton: "待機をやめる",
@@ -54,6 +60,7 @@
     connectionTimeoutHint: "相手のネットワーク状況によってはつながらないことがあります。もう一度試してください。",
     eventStreamError: "リアルタイム接続が不安定です",
     eventStreamErrorHint: "ページを開いたまま、もう一度ランダム通話を開始してください。",
+    androidHint: "Android では Chrome で開き、HTTPS でアクセスして、マイク権限を許可してください。",
     stateIdle: "待機前",
     statePreparing: "準備中",
     stateWaiting: "待機中",
@@ -97,13 +104,20 @@
     metricSpacesLabel: "Matching spaces",
     metricCallsLabel: "Active random calls",
     authTitle: "My Account",
-    authDescription: "Register once and reuse your display name and profile image everywhere.",
+    authDescription: "Log in with your email and password to use Tellnow.",
+    signupTitle: "Create account",
+    signupDescription: "Once registration is complete, you can use Tellnow right away.",
     emailLabel: "Email",
     passwordLabel: "Password",
+    signupEmailLabel: "Email",
+    signupPasswordLabel: "Password",
     accountNameLabel: "Display name",
-    accountAvatarLabel: "Profile image URL",
     signUpButton: "Sign up",
     loginButton: "Log in",
+    openSignupButton: "Open signup",
+    backToLoginButton: "Back to login",
+    showPassword: "Show",
+    hidePassword: "Hide",
     createRoomButton: "Create room with this word",
     createRoomTitle: "Create a room with your word",
     createRoomDescription: "The word you enter will be added to the Club list.",
@@ -114,7 +128,6 @@
     roomEmptyTitle: "No space selected yet",
     roomEmptyDescription: "Choose a space from the list to see the room here.",
     displayNameLabel: "Display name",
-    avatarUrlLabel: "Profile image URL",
     joinButton: "Join this space",
     queueButton: "Start random call",
     leaveQueueButton: "Leave queue",
@@ -143,6 +156,7 @@
     connectionTimeoutHint: "Depending on the network, this match may fail. Please try again.",
     eventStreamError: "Realtime sync became unstable",
     eventStreamErrorHint: "Keep the page open and start another random call.",
+    androidHint: "On Android, open this in Chrome over HTTPS and allow microphone permission.",
     stateIdle: "Idle",
     statePreparing: "Preparing",
     stateWaiting: "Waiting",
@@ -190,8 +204,8 @@ const el = {
   createRoomButton: document.getElementById("createRoomButton"),
   searchSection: document.getElementById("searchSection"), accountSection: document.getElementById("accountSection"), createSection: document.getElementById("createSection"), callSection: document.getElementById("callSection"), feedSection: document.getElementById("feedSection"),
   createRoomTitle: document.getElementById("createRoomTitle"), createRoomDescription: document.getElementById("createRoomDescription"), createRoomWordLabel: document.getElementById("createRoomWordLabel"), createRoomWordInput: document.getElementById("createRoomWordInput"), createRoomForm: document.getElementById("createRoomForm"), submitCreateRoomButton: document.getElementById("submitCreateRoomButton"), cancelCreateRoomButton: document.getElementById("cancelCreateRoomButton"),
-  authTitle: document.getElementById("authTitle"), authDescription: document.getElementById("authDescription"), emailLabel: document.getElementById("emailLabel"), passwordLabel: document.getElementById("passwordLabel"), accountNameLabel: document.getElementById("accountNameLabel"), accountAvatarLabel: document.getElementById("accountAvatarLabel"), currentAccountBox: document.getElementById("currentAccountBox"), currentAccountText: document.getElementById("currentAccountText"), authEmailInput: document.getElementById("authEmailInput"), authPasswordInput: document.getElementById("authPasswordInput"), authDisplayNameInput: document.getElementById("authDisplayNameInput"), authAvatarUrlInput: document.getElementById("authAvatarUrlInput"), signUpButton: document.getElementById("signUpButton"), loginButton: document.getElementById("loginButton"),
-  roomLabel: document.getElementById("roomLabel"), roomTitle: document.getElementById("roomTitle"), roomDescription: document.getElementById("roomDescription"), spaceHighlights: document.getElementById("spaceHighlights"), activeUsersCount: document.getElementById("activeUsersCount"), waitingUsersCount: document.getElementById("waitingUsersCount"), activeCallsCount: document.getElementById("activeCallsCount"), highlightUsersLabel: document.getElementById("highlightUsersLabel"), highlightWaitingLabel: document.getElementById("highlightWaitingLabel"), highlightCallsLabel: document.getElementById("highlightCallsLabel"), joinForm: document.getElementById("joinForm"), displayNameLabel: document.getElementById("displayNameLabel"), displayNameInput: document.getElementById("displayNameInput"), avatarUrlLabel: document.getElementById("avatarUrlLabel"), avatarUrlInput: document.getElementById("avatarUrlInput"), avatarPreview: document.getElementById("avatarPreview"), joinButton: document.getElementById("joinButton"), roomControls: document.getElementById("roomControls"), selfAvatar: document.getElementById("selfAvatar"), selfProfileLabel: document.getElementById("selfProfileLabel"), selfNameText: document.getElementById("selfNameText"), peerAvatar: document.getElementById("peerAvatar"), partnerLabel: document.getElementById("partnerLabel"), peerName: document.getElementById("peerName"), statusLabel: document.getElementById("statusLabel"), callStatePill: document.getElementById("callStatePill"), statusText: document.getElementById("statusText"), presenceText: document.getElementById("presenceText"), callHint: document.getElementById("callHint"), queueButton: document.getElementById("queueButton"), leaveQueueButton: document.getElementById("leaveQueueButton"), endCallButton: document.getElementById("endCallButton"), muteToggle: document.getElementById("muteToggle"), muteLabel: document.getElementById("muteLabel"), remoteAudio: document.getElementById("remoteAudio"),
+  loginPanel: document.getElementById("loginPanel"), signupPanel: document.getElementById("signupPanel"), loginForm: document.getElementById("loginForm"), signupForm: document.getElementById("signupForm"), authTitle: document.getElementById("authTitle"), authDescription: document.getElementById("authDescription"), signupTitle: document.getElementById("signupTitle"), signupDescription: document.getElementById("signupDescription"), emailLabel: document.getElementById("emailLabel"), passwordLabel: document.getElementById("passwordLabel"), signupEmailLabel: document.getElementById("signupEmailLabel"), signupPasswordLabel: document.getElementById("signupPasswordLabel"), accountNameLabel: document.getElementById("accountNameLabel"), currentAccountBox: document.getElementById("currentAccountBox"), currentAccountText: document.getElementById("currentAccountText"), authEmailInput: document.getElementById("authEmailInput"), authPasswordInput: document.getElementById("authPasswordInput"), signupEmailInput: document.getElementById("signupEmailInput"), signupPasswordInput: document.getElementById("signupPasswordInput"), authDisplayNameInput: document.getElementById("authDisplayNameInput"), signUpButton: document.getElementById("signUpButton"), loginButton: document.getElementById("loginButton"), openSignupButton: document.getElementById("openSignupButton"), backToLoginButton: document.getElementById("backToLoginButton"), toggleLoginPasswordButton: document.getElementById("toggleLoginPasswordButton"), toggleSignupPasswordButton: document.getElementById("toggleSignupPasswordButton"),
+  roomLabel: document.getElementById("roomLabel"), roomTitle: document.getElementById("roomTitle"), roomDescription: document.getElementById("roomDescription"), spaceHighlights: document.getElementById("spaceHighlights"), activeUsersCount: document.getElementById("activeUsersCount"), waitingUsersCount: document.getElementById("waitingUsersCount"), activeCallsCount: document.getElementById("activeCallsCount"), highlightUsersLabel: document.getElementById("highlightUsersLabel"), highlightWaitingLabel: document.getElementById("highlightWaitingLabel"), highlightCallsLabel: document.getElementById("highlightCallsLabel"), joinForm: document.getElementById("joinForm"), displayNameLabel: document.getElementById("displayNameLabel"), displayNameInput: document.getElementById("displayNameInput"), avatarPreview: document.getElementById("avatarPreview"), joinButton: document.getElementById("joinButton"), roomControls: document.getElementById("roomControls"), selfAvatar: document.getElementById("selfAvatar"), selfProfileLabel: document.getElementById("selfProfileLabel"), selfNameText: document.getElementById("selfNameText"), peerAvatar: document.getElementById("peerAvatar"), partnerLabel: document.getElementById("partnerLabel"), peerName: document.getElementById("peerName"), statusLabel: document.getElementById("statusLabel"), callStatePill: document.getElementById("callStatePill"), statusText: document.getElementById("statusText"), presenceText: document.getElementById("presenceText"), callHint: document.getElementById("callHint"), queueButton: document.getElementById("queueButton"), leaveQueueButton: document.getElementById("leaveQueueButton"), endCallButton: document.getElementById("endCallButton"), muteToggle: document.getElementById("muteToggle"), muteLabel: document.getElementById("muteLabel"), remoteAudio: document.getElementById("remoteAudio"),
   chatTabButton: document.getElementById("chatTabButton"), historyTabButton: document.getElementById("historyTabButton"), chatPane: document.getElementById("chatPane"), historyPane: document.getElementById("historyPane"), messageList: document.getElementById("messageList"), historyList: document.getElementById("historyList"), chatForm: document.getElementById("chatForm"), chatInput: document.getElementById("chatInput"), sendButton: document.getElementById("sendButton"),
   navSearch: document.getElementById("navSearch"), navAccount: document.getElementById("navAccount"), navCall: document.getElementById("navCall"), navChat: document.getElementById("navChat"), navHistory: document.getElementById("navHistory")
 };
@@ -211,9 +225,11 @@ async function flushPendingIceCandidates() { if (!state.peerConnection || !state
 function startConnectionTimeout() { clearConnectionTimeout(); state.connectionTimeoutId = setTimeout(() => { setStatus(t("connectionTimeout"), t("connectionTimeoutHint"), "error"); closePeerConnection(); }, 18000); }
 function persistSession() { if (state.authToken) localStorage.setItem("spacecall-auth-token", state.authToken); else localStorage.removeItem("spacecall-auth-token"); if (state.account) localStorage.setItem("spacecall-account", JSON.stringify(state.account)); else localStorage.removeItem("spacecall-account"); }
 function clearSession() { state.authToken = ""; state.account = null; persistSession(); }
-function requireAuthScreen() { showScreen("account"); setStatus(t("authRequiredTitle"), t("authRequiredHint"), "idle"); }
+function requireAuthScreen() { showAuthPanel("login"); showScreen("account"); setStatus(t("authRequiredTitle"), t("authRequiredHint"), "idle"); }
 function renderCurrentAccount() { if (!state.account) { el.currentAccountBox.classList.add("hidden"); applyAvatar(el.topProfileAvatar, "?", "", 0); return; } el.currentAccountBox.classList.remove("hidden"); el.currentAccountText.textContent = `${state.account.displayName} (${state.account.email})`; applyAvatar(el.topProfileAvatar, state.account.displayName, state.account.avatarUrl || "", 0); }
-function syncJoinFormFromAccount() { if (!state.account) return; el.displayNameInput.value = state.account.displayName || ""; el.avatarUrlInput.value = state.account.avatarUrl || ""; updateAvatarPreview(); }
+function syncJoinFormFromAccount() { if (!state.account) return; el.displayNameInput.value = state.account.displayName || ""; updateAvatarPreview(); }
+function showAuthPanel(panel) { el.loginPanel.classList.toggle("hidden", panel !== "login"); el.signupPanel.classList.toggle("hidden", panel !== "signup"); }
+function togglePasswordVisibility(input, button) { const isPassword = input.type === "password"; input.type = isPassword ? "text" : "password"; button.textContent = isPassword ? t("hidePassword") : t("showPassword"); }
 function renderMetrics() { el.spaceCountMetric.textContent = String(state.spaces.length); el.activeCallsMetric.textContent = String(state.spaces.reduce((sum, space) => sum + (space.activeCalls || 0), 0)); }
 function renderSpaces() {
   if (!state.spaces.length) {
@@ -315,7 +331,7 @@ function renderHistory() {
   }).join("");
 }
 
-function updateAvatarPreview() { applyAvatar(el.avatarPreview, el.displayNameInput.value.trim() || state.profile.displayName || "?", el.avatarUrlInput.value.trim(), 0); }
+function updateAvatarPreview() { applyAvatar(el.avatarPreview, el.displayNameInput.value.trim() || state.profile.displayName || "?", "", 0); }
 function updateSelfProfile() { el.selfNameText.textContent = state.profile.displayName || "-"; applyAvatar(el.selfAvatar, state.profile.displayName || "?", state.profile.avatarUrl || "", 0); }
 function updatePeerProfile() { el.peerName.textContent = state.peerName || t("unknownPeer"); applyAvatar(el.peerAvatar, state.peerName || "?", state.peerAvatarUrl || "", 1); }
 function showFeed(feed) { state.activeFeed = feed; el.chatTabButton.classList.toggle("active", feed === "chat"); el.historyTabButton.classList.toggle("active", feed === "history"); el.chatPane.classList.toggle("hidden", feed !== "chat"); el.historyPane.classList.toggle("hidden", feed !== "history"); }
@@ -325,10 +341,10 @@ function applyTranslations() {
   document.documentElement.lang = state.language;
   document.body.dir = (translations[state.language] || translations.ja).dir;
   el.topBadge.textContent = t("topBadge"); el.heroTitle.textContent = t("heroTitle"); el.heroDescription.textContent = t("heroDescription"); el.searchInput.placeholder = t("searchPlaceholder"); el.metricSpacesLabel.textContent = t("metricSpacesLabel"); el.metricCallsLabel.textContent = t("metricCallsLabel");
-  el.authTitle.textContent = t("authTitle"); el.authDescription.textContent = t("authDescription"); el.emailLabel.textContent = t("emailLabel"); el.passwordLabel.textContent = t("passwordLabel"); el.accountNameLabel.textContent = t("accountNameLabel"); el.accountAvatarLabel.textContent = t("accountAvatarLabel"); el.signUpButton.textContent = t("signUpButton"); el.loginButton.textContent = t("loginButton");
+  el.authTitle.textContent = t("authTitle"); el.authDescription.textContent = t("authDescription"); el.signupTitle.textContent = t("signupTitle"); el.signupDescription.textContent = t("signupDescription"); el.emailLabel.textContent = t("emailLabel"); el.passwordLabel.textContent = t("passwordLabel"); el.signupEmailLabel.textContent = t("signupEmailLabel"); el.signupPasswordLabel.textContent = t("signupPasswordLabel"); el.accountNameLabel.textContent = t("accountNameLabel"); el.signUpButton.textContent = t("signUpButton"); el.loginButton.textContent = t("loginButton"); el.openSignupButton.textContent = t("openSignupButton"); el.backToLoginButton.textContent = t("backToLoginButton"); el.toggleLoginPasswordButton.textContent = t(el.authPasswordInput.type === "password" ? "showPassword" : "hidePassword"); el.toggleSignupPasswordButton.textContent = t(el.signupPasswordInput.type === "password" ? "showPassword" : "hidePassword");
   el.createRoomButton.textContent = t("createRoomButton");
   el.createRoomTitle.textContent = t("createRoomTitle"); el.createRoomDescription.textContent = t("createRoomDescription"); el.createRoomWordLabel.textContent = t("createRoomWordLabel"); el.submitCreateRoomButton.textContent = t("submitCreateRoomButton"); el.cancelCreateRoomButton.textContent = t("cancelCreateRoomButton");
-  el.roomLabel.textContent = t("roomLabel"); el.displayNameLabel.textContent = t("displayNameLabel"); el.avatarUrlLabel.textContent = t("avatarUrlLabel"); el.joinButton.textContent = t("joinButton"); el.queueButton.textContent = t("queueButton"); el.leaveQueueButton.textContent = t("leaveQueueButton"); el.endCallButton.textContent = t("endCallButton"); el.muteLabel.textContent = t("muteLabel"); el.chatTabButton.textContent = t("chatTab"); el.historyTabButton.textContent = t("historyTab"); el.chatInput.placeholder = t("chatPlaceholder"); el.sendButton.textContent = t("sendButton"); el.highlightUsersLabel.textContent = t("highlightUsersLabel"); el.highlightWaitingLabel.textContent = t("highlightWaitingLabel"); el.highlightCallsLabel.textContent = t("highlightCallsLabel"); el.selfProfileLabel.textContent = t("selfProfileLabel"); el.partnerLabel.textContent = t("partnerLabel"); el.statusLabel.textContent = t("statusLabel");
+  el.roomLabel.textContent = t("roomLabel"); el.displayNameLabel.textContent = t("displayNameLabel"); el.joinButton.textContent = t("joinButton"); el.queueButton.textContent = t("queueButton"); el.leaveQueueButton.textContent = t("leaveQueueButton"); el.endCallButton.textContent = t("endCallButton"); el.muteLabel.textContent = t("muteLabel"); el.chatTabButton.textContent = t("chatTab"); el.historyTabButton.textContent = t("historyTab"); el.chatInput.placeholder = t("chatPlaceholder"); el.sendButton.textContent = t("sendButton"); el.highlightUsersLabel.textContent = t("highlightUsersLabel"); el.highlightWaitingLabel.textContent = t("highlightWaitingLabel"); el.highlightCallsLabel.textContent = t("highlightCallsLabel"); el.selfProfileLabel.textContent = t("selfProfileLabel"); el.partnerLabel.textContent = t("partnerLabel"); el.statusLabel.textContent = t("statusLabel");
   setCallPhase(state.callPhase || "idle");
   renderSpaces(); renderRoom(); renderMessages(); renderHistory();
 }
@@ -341,11 +357,11 @@ function openCreateRoomScreen() { if (!state.account || !state.authToken) { requ
 async function createRoomFromKeyword(event) { if (event) event.preventDefault(); const keyword = el.createRoomWordInput.value.trim() || el.searchInput.value.trim() || state.query.trim(); if (!keyword) return; const data = await api("/api/spaces/create", { method: "POST", body: JSON.stringify({ keyword, query: keyword, name: keyword, lang: state.language }) }); el.searchInput.value = ""; await loadSpaces(""); selectSpace(data.space); }
 
 function selectSpace(space) { if (!state.account || !state.authToken) { requireAuthScreen(); return; } state.selectedSpace = space; state.participantId = null; state.profile = { displayName: state.account?.displayName || "", avatarUrl: state.account?.avatarUrl || "" }; state.peerId = null; state.peerName = ""; state.peerAvatarUrl = ""; state.messages = []; state.history = []; state.pendingIceCandidates = []; closeEventStream(); closePeerConnection(); clearConnectionTimeout(); syncJoinFormFromAccount(); updateSelfProfile(); updatePeerProfile(); setStatus(t("roomBeforeJoin"), t("defaultHint"), "idle"); renderRoom(); renderMessages(); renderHistory(); showScreen("call"); }
-async function joinSelectedSpace(event) { event.preventDefault(); if (!state.selectedSpace) return; const displayName = el.displayNameInput.value.trim(); const avatarUrl = el.avatarUrlInput.value.trim(); if (!displayName) return; await ensureLocalAudio(); const data = await api("/api/participants", { method: "POST", body: JSON.stringify({ displayName, avatarUrl, preferredLanguage: state.language, spaceId: state.selectedSpace.id, keyword: state.query }) }); state.participantId = data.participantId; state.profile = data.profile; state.selectedSpace = data.space; state.messages = data.messages || []; state.history = data.history || []; updateSelfProfile(); openEventStream(); renderRoom(); renderMessages(); renderHistory(); setStatus(t("roomJoined"), t("roomJoinedHint"), "preparing"); showScreen("call"); await joinQueue(); }
+async function joinSelectedSpace(event) { event.preventDefault(); if (!state.selectedSpace) return; const displayName = el.displayNameInput.value.trim(); if (!displayName) return; await ensureLocalAudio(); const data = await api("/api/participants", { method: "POST", body: JSON.stringify({ displayName, avatarUrl: "", preferredLanguage: state.language, spaceId: state.selectedSpace.id, keyword: state.query }) }); state.participantId = data.participantId; state.profile = data.profile; state.selectedSpace = data.space; state.messages = data.messages || []; state.history = data.history || []; updateSelfProfile(); openEventStream(); renderRoom(); renderMessages(); renderHistory(); setStatus(t("roomJoined"), t("roomJoinedHint"), "preparing"); showScreen("call"); await joinQueue(); }
 function closeEventStream() { if (state.eventSource) { state.eventSource.close(); state.eventSource = null; } }
 function closePeerConnection() { clearConnectionTimeout(); if (state.peerConnection) { state.peerConnection.ontrack = null; state.peerConnection.onicecandidate = null; state.peerConnection.onconnectionstatechange = null; state.peerConnection.oniceconnectionstatechange = null; state.peerConnection.close(); state.peerConnection = null; } state.pendingIceCandidates = []; el.remoteAudio.pause(); el.remoteAudio.srcObject = null; }
 function createPeerConnection(remoteParticipantId) { closePeerConnection(); const connection = new RTCPeerConnection({ iceServers: state.rtcIceServers }); state.peerConnection = connection; state.peerId = remoteParticipantId; state.pendingIceCandidates = []; if (state.localStream) state.localStream.getTracks().forEach((track) => connection.addTrack(track, state.localStream)); connection.onicecandidate = async (event) => { if (!event.candidate || !state.peerId) return; await sendSignal(state.peerId, "ice-candidate", event.candidate); }; connection.ontrack = async (event) => { el.remoteAudio.srcObject = event.streams[0]; try { await el.remoteAudio.play(); } catch (error) { console.warn("remote audio play failed", error); } setStatus(t("inCall"), `${state.peerName} ${t("withCall")}`, "connected"); }; connection.onconnectionstatechange = () => { if (connection.connectionState === "connecting") { setStatus(t("signalingStatus"), t("signalingHint"), "connecting"); } if (connection.connectionState === "connected") { clearConnectionTimeout(); setStatus(t("inCall"), `${state.peerName} ${t("withCall")}`, "connected"); } if (["failed", "closed", "disconnected"].includes(connection.connectionState)) { setStatus(t("disconnected"), t("disconnectedHint"), "error"); } syncActionButtons(); }; connection.oniceconnectionstatechange = () => { if (["failed", "disconnected"].includes(connection.iceConnectionState)) { setStatus(t("disconnected"), t("disconnectedHint"), "error"); syncActionButtons(); } }; syncActionButtons(); return connection; }
-async function ensureLocalAudio() { if (state.localStream) return state.localStream; setStatus(t("preparingMic"), t("preparingMicHint"), "preparing"); state.localStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }, video: false }); el.muteToggle.checked = false; syncActionButtons(); return state.localStream; }
+async function ensureLocalAudio() { if (state.localStream) return state.localStream; if (!window.isSecureContext) throw new Error("HTTPS または localhost で開いてください。"); if (!navigator.mediaDevices?.getUserMedia) throw new Error("この端末のブラウザではマイク取得に対応していません。"); setStatus(t("preparingMic"), t("preparingMicHint"), "preparing"); state.localStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }, video: false }); el.muteToggle.checked = false; syncActionButtons(); return state.localStream; }
 async function sendSignal(toId, kind, data) { await api("/api/signal", { method: "POST", body: JSON.stringify({ participantId: state.participantId, toId, kind, data }) }); }
 function openEventStream() {
   closeEventStream();
@@ -365,9 +381,9 @@ async function joinQueue() { if (!state.participantId) { setStatus(t("enterSpace
 async function leaveQueue() { if (!state.participantId) return; clearConnectionTimeout(); await api("/api/queue/leave", { method: "POST", body: JSON.stringify({ participantId: state.participantId }) }); setStatus(t("stoppedWaiting"), t("defaultHint"), "idle"); await loadSpaces(state.query); syncActionButtons(); }
 async function endCall() { if (!state.participantId) return; const data = await api("/api/call/end", { method: "POST", body: JSON.stringify({ participantId: state.participantId }) }); state.peerId = null; state.peerName = ""; state.peerAvatarUrl = ""; state.history = data.history || state.history; closePeerConnection(); updatePeerProfile(); renderHistory(); setStatus(t("endedCall"), t("defaultHint"), "idle"); await loadSpaces(state.query); syncActionButtons(); }
 async function sendMessage(event) { event.preventDefault(); if (!state.participantId) { setStatus(t("enterSpaceFirst"), t("defaultHint")); return; } const text = el.chatInput.value.trim(); if (!text) return; await api("/api/messages", { method: "POST", body: JSON.stringify({ participantId: state.participantId, text }) }); el.chatInput.value = ""; }
-async function signUpAccountFromForm() { const payload = { email: el.authEmailInput.value.trim(), password: el.authPasswordInput.value.trim(), displayName: el.authDisplayNameInput.value.trim(), avatarUrl: el.authAvatarUrlInput.value.trim(), preferredLanguage: state.language }; const data = await api("/api/auth/signup", { method: "POST", body: JSON.stringify(payload) }); state.account = data.account; state.authToken = data.authToken || ""; persistSession(); renderCurrentAccount(); syncJoinFormFromAccount(); setStatus(t("signedUp"), t("signedUpHint"), "idle"); showScreen("search"); await loadSpaces(""); }
-async function loginAccountFromForm() { const payload = { email: el.authEmailInput.value.trim(), password: el.authPasswordInput.value.trim() }; const data = await api("/api/auth/login", { method: "POST", body: JSON.stringify(payload) }); state.account = data.account; state.authToken = data.authToken || ""; persistSession(); el.authDisplayNameInput.value = state.account.displayName || ""; el.authAvatarUrlInput.value = state.account.avatarUrl || ""; renderCurrentAccount(); syncJoinFormFromAccount(); setStatus(t("loggedIn"), t("loggedInHint"), "idle"); showScreen("search"); await loadSpaces(""); }
-function showError(error) { console.error(error); setStatus(t("error"), error?.message || t("errorHint"), "error"); }
+async function signUpAccountFromForm() { const payload = { email: el.signupEmailInput.value.trim(), password: el.signupPasswordInput.value.trim(), displayName: el.authDisplayNameInput.value.trim(), avatarUrl: "", preferredLanguage: state.language }; const data = await api("/api/auth/signup", { method: "POST", body: JSON.stringify(payload) }); state.account = data.account; state.authToken = data.authToken || ""; persistSession(); renderCurrentAccount(); syncJoinFormFromAccount(); setStatus(t("signedUp"), t("signedUpHint"), "idle"); showScreen("search"); await loadSpaces(""); }
+async function loginAccountFromForm(event) { if (event) event.preventDefault(); const payload = { email: el.authEmailInput.value.trim(), password: el.authPasswordInput.value.trim() }; const data = await api("/api/auth/login", { method: "POST", body: JSON.stringify(payload) }); state.account = data.account; state.authToken = data.authToken || ""; persistSession(); el.authDisplayNameInput.value = state.account.displayName || ""; renderCurrentAccount(); syncJoinFormFromAccount(); setStatus(t("loggedIn"), t("loggedInHint"), "idle"); showScreen("search"); await loadSpaces(""); }
+function showError(error) { console.error(error); const hint = /android|media|permission|secure|NotAllowed|NotReadable/i.test(String(error?.message || "")) ? `${error?.message || t("errorHint")} ${t("androidHint")}` : error?.message || t("errorHint"); setStatus(t("error"), hint, "error"); }
 async function bootstrap() { await loadConfig(); el.languageSelect.value = state.language; const savedAccount = localStorage.getItem("spacecall-account"); if (savedAccount && !state.account) { try { state.account = JSON.parse(savedAccount); } catch (error) { localStorage.removeItem("spacecall-account"); } } if (state.authToken) { try { const session = await api(`/api/auth/session?authToken=${encodeURIComponent(state.authToken)}`); state.account = session.account; persistSession(); } catch (error) { clearSession(); } } applyTranslations(); renderCurrentAccount(); syncJoinFormFromAccount(); updateSelfProfile(); updatePeerProfile(); updateAvatarPreview(); if (!state.account || !state.authToken) { requireAuthScreen(); return; } await loadSpaces(state.query); showScreen("search"); setStatus(t("roomBeforeJoin"), t("defaultHint"), "idle"); setInterval(() => { if (!state.authToken) return; loadSpaces(state.query).catch(() => {}); if (state.selectedSpace) { loadMessages().catch(() => {}); loadHistory().catch(() => {}); } }, 8000); }
 
 el.searchButton.addEventListener("click", () => loadSpaces(el.searchInput.value.trim()).catch(showError));
@@ -375,7 +391,6 @@ el.createRoomButton.addEventListener("click", () => openCreateRoomScreen());
 el.searchInput.addEventListener("keydown", (event) => { if (event.key === "Enter") { event.preventDefault(); loadSpaces(el.searchInput.value.trim()).catch(showError); } });
 el.languageSelect.addEventListener("change", async () => { state.language = el.languageSelect.value; localStorage.setItem("spacecall-language", state.language); applyTranslations(); await loadSpaces(state.query).catch(showError); });
 el.displayNameInput.addEventListener("input", updateAvatarPreview);
-el.avatarUrlInput.addEventListener("input", updateAvatarPreview);
 el.joinForm.addEventListener("submit", (event) => joinSelectedSpace(event).catch(showError));
 el.queueButton.addEventListener("click", () => joinQueue().catch(showError));
 el.leaveQueueButton.addEventListener("click", () => leaveQueue().catch(showError));
@@ -383,8 +398,12 @@ el.endCallButton.addEventListener("click", () => endCall().catch(showError));
 el.chatForm.addEventListener("submit", (event) => sendMessage(event).catch(showError));
 el.chatTabButton.addEventListener("click", () => showFeed("chat"));
 el.historyTabButton.addEventListener("click", () => showFeed("history"));
-el.signUpButton.addEventListener("click", () => signUpAccountFromForm().catch(showError));
-el.loginButton.addEventListener("click", () => loginAccountFromForm().catch(showError));
+el.loginForm?.addEventListener("submit", (event) => loginAccountFromForm(event).catch(showError));
+el.signupForm?.addEventListener("submit", (event) => { event.preventDefault(); signUpAccountFromForm().catch(showError); });
+el.openSignupButton.addEventListener("click", () => showAuthPanel("signup"));
+el.backToLoginButton.addEventListener("click", () => showAuthPanel("login"));
+el.toggleLoginPasswordButton.addEventListener("click", () => togglePasswordVisibility(el.authPasswordInput, el.toggleLoginPasswordButton));
+el.toggleSignupPasswordButton.addEventListener("click", () => togglePasswordVisibility(el.signupPasswordInput, el.toggleSignupPasswordButton));
 el.navSearch.addEventListener("click", () => showScreen("search"));
 el.navAccount.addEventListener("click", () => showScreen("account"));
 el.navCall.addEventListener("click", () => showScreen(state.selectedSpace ? "call" : "create"));
