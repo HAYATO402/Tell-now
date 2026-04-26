@@ -35,6 +35,8 @@ loadDotEnv();
 const HOST = "0.0.0.0";
 const PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = path.join(__dirname, "public");
+const DATA_DIR = path.join(__dirname, "data");
+const ACCOUNTS_FILE = path.join(DATA_DIR, "accounts.json");
 const DEFAULT_LANG = "ja";
 const SUPPORTED_LANGS = ["ja", "en", "zh", "ar", "es"];
 const SUPABASE_URL = process.env.SUPABASE_URL || "";
@@ -43,6 +45,8 @@ const SUPABASE_ENABLED = Boolean(SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY);
 const TURN_URL = process.env.TURN_URL || "";
 const TURN_USERNAME = process.env.TURN_USERNAME || "";
 const TURN_CREDENTIAL = process.env.TURN_CREDENTIAL || "";
+
+loadLocalAccounts();
 
 const baseSpaces = [
   {
@@ -122,6 +126,60 @@ function nowIso() {
   return new Date().toISOString();
 }
 
+function ensureDataDir() {
+  if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+  }
+}
+
+function loadLocalAccounts() {
+  ensureDataDir();
+  if (!fs.existsSync(ACCOUNTS_FILE)) {
+    return;
+  }
+  try {
+    const rows = JSON.parse(fs.readFileSync(ACCOUNTS_FILE, "utf8"));
+    if (!Array.isArray(rows)) {
+      return;
+    }
+    rows.forEach((account) => {
+      if (account?.email) {
+        localAccounts.set(account.email, account);
+        if (account.authToken) {
+          accountSessions.set(account.authToken, {
+            authToken: account.authToken,
+            userId: account.userId,
+            email: account.email,
+            displayName: account.displayName,
+            avatarUrl: account.avatarUrl || "",
+            avatarIcon: account.avatarIcon || "",
+            preferredLanguage: account.preferredLanguage || DEFAULT_LANG,
+            createdAt: account.updatedAt || nowIso(),
+          });
+        }
+      }
+    });
+  } catch (error) {
+    console.error("Failed to load local accounts", error.message);
+  }
+}
+
+function saveLocalAccounts() {
+  ensureDataDir();
+  const rows = [...localAccounts.values()].map((account) => ({
+    userId: account.userId,
+    email: account.email,
+    password: account.password,
+    displayName: account.displayName,
+    avatarUrl: account.avatarUrl || "",
+    avatarIcon: account.avatarIcon || "",
+    authToken: account.authToken || "",
+    preferredLanguage: account.preferredLanguage || DEFAULT_LANG,
+    updatedAt: nowIso(),
+  }));
+  fs.writeFileSync(ACCOUNTS_FILE, JSON.stringify(rows, null, 2), "utf8");
+}
+
 function supportedLang(lang) {
   return SUPPORTED_LANGS.includes(lang) ? lang : DEFAULT_LANG;
 }
@@ -163,16 +221,19 @@ function sendJson(response, statusCode, payload) {
 }
 
 function issueAuthToken(account) {
-  const authToken = randomUUID();
+  const authToken = account.authToken || randomUUID();
+  account.authToken = authToken;
   accountSessions.set(authToken, {
     authToken,
     userId: account.userId,
     email: account.email,
     displayName: account.displayName,
     avatarUrl: account.avatarUrl || "",
+    avatarIcon: account.avatarIcon || "",
     preferredLanguage: account.preferredLanguage || DEFAULT_LANG,
     createdAt: nowIso(),
   });
+  saveLocalAccounts();
   return authToken;
 }
 
@@ -261,6 +322,7 @@ function getSpaceParticipantPreviews(spaceId) {
         id: participant.id,
         displayName: participant.displayName,
         avatarUrl: participant.avatarUrl || "",
+        avatarIcon: participant.avatarIcon || "",
       });
     }
   });
@@ -501,9 +563,29 @@ async function persistSpace(space) {
   }, "resolution=merge-duplicates,return=minimal");
 }
 
-async function signUpAccount({ email, password, displayName, avatarUrl, preferredLanguage }) {
-  if (localAccounts.has(email)) {
-    throw new Error("account_exists");
+async function signUpAccount({ email, password, displayName, avatarUrl, avatarIcon, preferredLanguage }) {
+  const existingLocalAccount = localAccounts.get(email);
+  if (existingLocalAccount) {
+    if (existingLocalAccount.password !== password) {
+      throw new Error("account_exists");
+    }
+    const updatedAccount = {
+      ...existingLocalAccount,
+      displayName: displayName || existingLocalAccount.displayName,
+      avatarUrl: avatarUrl || existingLocalAccount.avatarUrl || "",
+      avatarIcon: avatarIcon || existingLocalAccount.avatarIcon || "",
+      preferredLanguage: preferredLanguage || existingLocalAccount.preferredLanguage || DEFAULT_LANG,
+    };
+    localAccounts.set(email, updatedAccount);
+    saveLocalAccounts();
+    return {
+      userId: updatedAccount.userId,
+      email: updatedAccount.email,
+      displayName: updatedAccount.displayName,
+      avatarUrl: updatedAccount.avatarUrl || "",
+      avatarIcon: updatedAccount.avatarIcon || "",
+      preferredLanguage: updatedAccount.preferredLanguage || DEFAULT_LANG,
+    };
   }
 
   if (SUPABASE_ENABLED) {
@@ -547,14 +629,17 @@ async function signUpAccount({ email, password, displayName, avatarUrl, preferre
         password,
         displayName,
         avatarUrl: avatarUrl || "",
+        avatarIcon: avatarIcon || "",
         preferredLanguage,
       };
       localAccounts.set(email, account);
+      saveLocalAccounts();
       return {
         userId,
         email,
         displayName,
         avatarUrl: avatarUrl || "",
+        avatarIcon: avatarIcon || "",
         preferredLanguage,
       };
     } catch (error) {
@@ -568,9 +653,11 @@ async function signUpAccount({ email, password, displayName, avatarUrl, preferre
     password,
     displayName,
     avatarUrl: avatarUrl || "",
+    avatarIcon: avatarIcon || "",
     preferredLanguage,
   };
   localAccounts.set(email, account);
+  saveLocalAccounts();
   return account;
 }
 
@@ -599,9 +686,11 @@ async function loginAccount({ email, password }) {
         email: data.user?.email || email,
         displayName: data.user?.user_metadata?.display_name || localAccount?.displayName || data.user?.email || email,
         avatarUrl: data.user?.user_metadata?.avatar_url || localAccount?.avatarUrl || "",
+        avatarIcon: localAccount?.avatarIcon || "",
         preferredLanguage: data.user?.user_metadata?.preferred_language || localAccount?.preferredLanguage || DEFAULT_LANG,
       };
       localAccounts.set(email, { ...localAccount, ...account, password });
+      saveLocalAccounts();
       return account;
     } catch (error) {
       console.error("Supabase login failed, falling back to local account.", error.message);
@@ -618,6 +707,7 @@ async function loginAccount({ email, password }) {
     email: account.email,
     displayName: account.displayName,
     avatarUrl: account.avatarUrl,
+    avatarIcon: account.avatarIcon || "",
     preferredLanguage: account.preferredLanguage,
   };
 }
@@ -799,8 +889,8 @@ function tryMatch(spaceId) {
   second.callSessionId = sessionId;
   first.callStartedAt = startedAt;
   second.callStartedAt = startedAt;
-  sendEvent(first.id, "matched", { peerId: second.id, peerName: second.displayName, peerAvatarUrl: second.avatarUrl || "", initiator: true });
-  sendEvent(second.id, "matched", { peerId: first.id, peerName: first.displayName, peerAvatarUrl: first.avatarUrl || "", initiator: false });
+  sendEvent(first.id, "matched", { peerId: second.id, peerName: second.displayName, peerAvatarUrl: second.avatarUrl || "", peerAvatarIcon: second.avatarIcon || "", initiator: true });
+  sendEvent(second.id, "matched", { peerId: first.id, peerName: first.displayName, peerAvatarUrl: first.avatarUrl || "", peerAvatarIcon: first.avatarIcon || "", initiator: false });
   broadcastSpaceStats(spaceId);
 }
 
@@ -827,11 +917,6 @@ function serveStaticFile(response, filePath) {
 
 function handleApi(request, response, url) {
   if (request.method === "GET" && url.pathname === "/api/spaces") {
-    const session = getAccountSession(request, url);
-    if (!session) {
-      sendJson(response, 401, { error: "auth_required" });
-      return true;
-    }
     const query = url.searchParams.get("q") || "";
     const lang = supportedLang(url.searchParams.get("lang") || DEFAULT_LANG);
     searchSpaces(query, lang).then((spaces) => sendJson(response, 200, { spaces })).catch((error) => sendJson(response, 500, { error: error.message }));
@@ -932,6 +1017,7 @@ function handleApi(request, response, url) {
       const password = String(payload.password || "").trim();
       const displayName = String(payload.displayName || "").trim();
       const avatarUrl = String(payload.avatarUrl || "").trim();
+      const avatarIcon = String(payload.avatarIcon || "").trim();
       const preferredLanguage = supportedLang(String(payload.preferredLanguage || DEFAULT_LANG));
       if (!email || !password || !displayName) {
         sendJson(response, 400, { error: "missing_fields" });
@@ -939,7 +1025,7 @@ function handleApi(request, response, url) {
       }
 
       try {
-        const account = await signUpAccount({ email, password, displayName, avatarUrl, preferredLanguage });
+        const account = await signUpAccount({ email, password, displayName, avatarUrl, avatarIcon, preferredLanguage });
         const authToken = issueAuthToken(account);
         sendJson(response, 201, { account, authToken });
       } catch (error) {
@@ -993,6 +1079,7 @@ function handleApi(request, response, url) {
       const requestedSpaceId = String(payload.spaceId || "").trim();
       const keyword = String(payload.keyword || "").trim();
       const avatarUrl = String(payload.avatarUrl || "").trim();
+      const avatarIcon = String(payload.avatarIcon || "").trim();
       const preferredLanguage = supportedLang(String(payload.preferredLanguage || DEFAULT_LANG));
       const space = getSpace(requestedSpaceId) || ensureDynamicSpace(keyword);
       if (!displayName || !space) {
@@ -1000,13 +1087,13 @@ function handleApi(request, response, url) {
         return;
       }
       const participant = {
-        id: randomUUID(), accountUserId: session.userId, displayName, avatarUrl, preferredLanguage, spaceId: space.id, state: "idle", peerId: null, peerName: "", callSessionId: null, callStartedAt: null, connected: true,
+        id: randomUUID(), accountUserId: session.userId, displayName, avatarUrl, avatarIcon: avatarIcon || session.avatarIcon || "", preferredLanguage, spaceId: space.id, state: "idle", peerId: null, peerName: "", callSessionId: null, callStartedAt: null, connected: true,
       };
       participants.set(participant.id, participant);
       persistProfile(participant);
       sendJson(response, 201, {
         participantId: participant.id,
-        profile: { displayName: participant.displayName, avatarUrl: participant.avatarUrl, preferredLanguage: participant.preferredLanguage },
+        profile: { displayName: participant.displayName, avatarUrl: participant.avatarUrl, avatarIcon: participant.avatarIcon || "", preferredLanguage: participant.preferredLanguage },
         space: serializeSpace(space, preferredLanguage),
         messages: await fetchMessages(space.id),
         history: await fetchHistory({ spaceId: space.id }),

@@ -29,6 +29,7 @@ button, input, select { font: inherit; }
 .topbar, .hero-card, .screen-panel { position: relative; z-index: 1; }
 .topbar { display:flex; justify-content:space-between; align-items:center; }
 .top-actions { display:flex; align-items:center; gap:8px; }
+.top-account-label { max-width:110px; padding:7px 10px; border-radius:12px; background: rgba(255,255,255,.92); border:1px solid rgba(39,67,52,.08); color: var(--primary-deep); font-size:.72rem; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .mini-icon-button, .top-profile-avatar, .language-chip { width:36px; height:36px; border-radius:12px; border:1px solid rgba(39,67,52,.08); background: rgba(255,255,255,.92); box-shadow: 0 8px 18px rgba(82,105,88,.07); }
 .mini-icon-button { display:grid; place-items:center; cursor:pointer; }
 .mini-icon-button span { display:block; width:5px; height:5px; background:#1ba95c; border-radius:4px; }

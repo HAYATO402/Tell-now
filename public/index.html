@@ -14,6 +14,7 @@
             <span></span><span></span><span></span><span></span>
           </button>
           <div class="top-actions">
+            <div id="topAccountLabel" class="top-account-label hidden">未ログイン</div>
             <label class="language-chip">
               <select id="languageSelect">
                 <option value="ja">JA</option>
@@ -62,53 +63,27 @@
             <p class="section-label">Current Account</p>
             <p id="currentAccountText" class="status-text">未ログイン</p>
           </div>
-          <div id="loginPanel">
-            <div class="room-heading">
-              <p class="section-label">Login</p>
-              <h2 id="authTitle">ログイン</h2>
-              <p id="authDescription" class="muted">メールアドレスとパスワードでログインすると Tellnow を使えます。</p>
-            </div>
-            <form id="loginForm" class="join-form">
-              <div class="profile-fields">
-                <label class="field"><span id="emailLabel">メールアドレス</span><input id="authEmailInput" type="email" placeholder="you@example.com" required /></label>
-                <label class="field">
-                  <span id="passwordLabel">パスワード</span>
-                  <div class="password-row">
-                    <input id="authPasswordInput" type="password" placeholder="6文字以上" required />
-                    <button type="button" id="toggleLoginPasswordButton" class="password-toggle-button">表示</button>
-                  </div>
-                </label>
-              </div>
-              <div class="controls-grid">
-                <button type="submit" id="loginButton" class="primary-button">ログイン</button>
-                <button type="button" id="openSignupButton" class="secondary-button">登録画面へ</button>
-              </div>
-            </form>
+          <div class="room-heading">
+            <p class="section-label">Account</p>
+            <h2 id="authTitle">アカウント登録</h2>
+            <p id="authDescription" class="muted">通話に参加する前に、名前とパスワードでアカウントを作成してください。</p>
           </div>
-          <div id="signupPanel" class="hidden">
-            <div class="room-heading">
-              <p class="section-label">Signup</p>
-              <h2 id="signupTitle">アカウント登録</h2>
-              <p id="signupDescription" class="muted">登録が完了すると、そのまま Tellnow を使えます。</p>
+          <form id="signupForm" class="join-form">
+            <div class="profile-fields">
+              <label class="field"><span id="accountNameLabel">表示名</span><input id="authDisplayNameInput" type="text" maxlength="24" placeholder="あなたの名前" required /></label>
+              <label class="field">
+                <span id="passwordLabel">パスワード</span>
+                <div class="password-row">
+                  <input id="signupPasswordInput" type="password" placeholder="6文字以上" required />
+                  <button type="button" id="toggleSignupPasswordButton" class="password-toggle-button">表示</button>
+                </div>
+              </label>
+              <label class="field"><span id="iconLabel">アイコン</span><input id="iconInput" type="text" maxlength="2" placeholder="😀" /></label>
             </div>
-            <form id="signupForm" class="join-form">
-              <div class="profile-fields">
-                <label class="field"><span id="signupEmailLabel">メールアドレス</span><input id="signupEmailInput" type="email" placeholder="you@example.com" required /></label>
-                <label class="field">
-                  <span id="signupPasswordLabel">パスワード</span>
-                  <div class="password-row">
-                    <input id="signupPasswordInput" type="password" placeholder="6文字以上" required />
-                    <button type="button" id="toggleSignupPasswordButton" class="password-toggle-button">表示</button>
-                  </div>
-                </label>
-                <label class="field"><span id="accountNameLabel">表示名</span><input id="authDisplayNameInput" type="text" maxlength="24" placeholder="あなたの名前" required /></label>
-              </div>
-              <div class="controls-grid">
-                <button type="submit" id="signUpButton" class="primary-button">登録する</button>
-                <button type="button" id="backToLoginButton" class="secondary-button">ログインへ戻る</button>
-              </div>
-            </form>
-          </div>
+            <div class="controls-grid">
+              <button type="submit" id="signUpButton" class="primary-button">この内容で登録する</button>
+            </div>
+          </form>
         </section>
 
         <section id="createSection" class="screen-panel glass-card auth-card hidden">
